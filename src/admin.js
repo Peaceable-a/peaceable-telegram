@@ -33,7 +33,7 @@ export async function handleAdminCommand(bot, msg, text) {
       await bot.sendMessage(chatId, '⚠️ Usage: /admin add [number] [country]')
       return
     }
-    addStudent(number, 'YSJ', country)
+    await addStudent(number, 'YSJ', country)
     await bot.sendMessage(chatId, `✅ *Student added!*\n\n📱 Number: ${number}\n🌍 Country: ${country}`, { parse_mode: 'Markdown' })
     return
   }
@@ -44,14 +44,14 @@ export async function handleAdminCommand(bot, msg, text) {
       await bot.sendMessage(chatId, '⚠️ Usage: /admin remove [number]')
       return
     }
-    const removed = removeStudent(number)
+    const removed = await removeStudent(number)
     clearHistory(number)
     await bot.sendMessage(chatId, removed ? `✅ Student *${number}* removed.` : `⚠️ Number *${number}* not found.`, { parse_mode: 'Markdown' })
     return
   }
 
   if (cmd === 'list') {
-    const students = getAllStudents()
+    const students = await getAllStudents()
     const entries = Object.entries(students)
     if (entries.length === 0) {
       await bot.sendMessage(chatId, '📋 No approved students yet.\n\nUse /admin add [number] [country] to add one.')
@@ -63,14 +63,14 @@ export async function handleAdminCommand(bot, msg, text) {
   }
 
   if (cmd === 'count') {
-    const approved = getCount()
+    const approved = await getCount()
     const active = getActiveConversations()
     await bot.sendMessage(chatId, `*📊 Numbers*\n\n✅ Approved students: ${approved}\n💬 Active conversations: ${active}`, { parse_mode: 'Markdown' })
     return
   }
 
   if (cmd === 'stats') {
-    const approved = getCount()
+    const approved = await getCount()
     const active = getActiveConversations()
     await bot.sendMessage(chatId, `*📊 Peaceable Stats*\n\n✅ Approved students: ${approved}\n💬 Active conversations: ${active}\n🤖 Bot status: Running ✅`, { parse_mode: 'Markdown' })
     return
