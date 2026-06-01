@@ -23,7 +23,7 @@ export async function handleMessage(bot, msg) {
   }
 
   // Whitelist check — ignore unapproved users silently
-  if (!isAdmin && !isApproved(userId)) {
+  if (!isAdmin && !(await isApproved(userId))) {
     console.log(`Ignored unapproved user: ${userId}`)
     return
   }
@@ -31,18 +31,16 @@ export async function handleMessage(bot, msg) {
   // Show typing indicator
   await bot.sendChatAction(chatId, 'typing')
 
-  // Greet new students once
+  // Greet new students once per session
   if (!greeted.has(userId)) {
     greeted.add(userId)
     await bot.sendMessage(chatId, GREETING, { parse_mode: 'Markdown' })
     return
   }
 
-  // Get Claude AI reply
+  // Get AI reply
   const reply = await askClaude(userId, text)
 
-  // Keep typing visible while generating
   await bot.sendChatAction(chatId, 'typing')
-
   await bot.sendMessage(chatId, reply, { parse_mode: 'Markdown' })
 }
